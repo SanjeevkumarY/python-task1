@@ -1,0 +1,85 @@
+class BankAccount:
+    def __init__(self, balance=0):
+        self.balance = balance
+        self.transaction_history = []
+
+    def deposit(self, amount):
+        self.balance += amount
+        self.transaction_history.append(f"Deposited ${amount}")
+
+    def withdraw(self, amount):
+        if amount > self.balance:
+            print("Insufficient funds!")
+        else:
+            self.balance -= amount
+            self.transaction_history.append(f"Withdrew ${amount}")
+
+    def transfer(self, amount, recipient):
+        if amount > self.balance:
+            print("Insufficient funds!")
+        else:
+            self.balance -= amount
+            recipient.deposit(amount)
+            self.transaction_history.append(f"Transferred ${amount} to {recipient}")
+
+    def get_balance(self):
+        return self.balance
+
+    def get_transaction_history(self):
+        return self.transaction_history
+
+
+class ATMInterface:
+    def __init__(self, account):
+        self.account = account
+
+    def show_options(self):
+        print("1. Check Balance")
+        print("2. Deposit")
+        print("3. Withdraw")
+        print("4. Transfer")
+        print("5. View Transaction History")
+        print("6. Exit")
+
+    def start(self):
+        while True:
+            self.show_options()
+            choice = int(input("Enter your choice: "))
+
+            if choice == 1:
+                print(f"Balance: ${self.account.get_balance()}")
+            elif choice == 2:
+                amount = float(input("Enter deposit amount: $"))
+                self.account.deposit(amount)
+                print("Deposit successful.")
+            elif choice == 3:
+                amount = float(input("Enter withdrawal amount: $"))
+                self.account.withdraw(amount)
+                print("Withdrawal successful.")
+            elif choice == 4:
+                amount = float(input("Enter transfer amount: $"))
+                recipient_account = input("Enter recipient's account number: ")
+                recipient = BankAccount()  # In a real system, you'd retrieve the recipient's account
+                self.account.transfer(amount, recipient)
+                print("Transfer successful.")
+            elif choice == 5:
+                print("Transaction History:")
+                for transaction in self.account.get_transaction_history():
+                    print(transaction)
+            elif choice == 6:
+                print("Exiting ATM. Thank you!")
+                break
+            else:
+                print("Invalid choice. Please try again.")
+
+
+# Example usage
+if __name__ == "__main__":
+    # Create a bank account
+    my_account = BankAccount()
+
+    # Create an ATM interface with the bank account
+    atm_interface = ATMInterface(my_account)
+
+    # Start the ATM interface
+    atm_interface.start()
